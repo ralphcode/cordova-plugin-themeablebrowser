@@ -746,6 +746,9 @@ public class ThemeableBrowser extends CordovaPlugin {
                     if (features.title.staticText != null) {
                         title.setText(features.title.staticText);
                     }
+                    if(features.title.textSize>0){
+                        title.setTextSize(features.title.textSize);
+                    }
                 }
 
                 // WebView
@@ -763,7 +766,6 @@ public class ThemeableBrowser extends CordovaPlugin {
                     public void onPageFinished(String url, boolean canGoBack, boolean canGoForward) {
                         if (inAppWebView != null
                                 && title != null && features.title != null
-                                && features.title.staticText == null
                                 && features.title.showPageTitle) {
                             title.setText(inAppWebView.getTitle());
                         }
@@ -1425,6 +1427,7 @@ public class ThemeableBrowser extends CordovaPlugin {
 
     private static class Title {
         public String color;
+        public float textSize;
         public String staticText;
         public boolean showPageTitle;
     }
