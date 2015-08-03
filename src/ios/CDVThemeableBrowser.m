@@ -42,6 +42,7 @@
 #define    kThemeableBrowserPropWwwImageDensity @"wwwImageDensity"
 #define    kThemeableBrowserPropStaticText @"staticText"
 #define    kThemeableBrowserPropShowPageTitle @"showPageTitle"
+#define    kThemeableBrowserPropTitleTextSize @"textSize"
 #define    kThemeableBrowserPropAlign @"align"
 #define    kThemeableBrowserPropTitle @"title"
 #define    kThemeableBrowserPropCancel @"cancel"
@@ -818,7 +819,8 @@
         if (_browserOptions.title[kThemeableBrowserPropStaticText]) {
             self.titleLabel.text = _browserOptions.title[kThemeableBrowserPropStaticText];
         }
-        
+        CGFloat textSize = [self getFloatFromDict:_browserOptions.title withKey:kThemeableBrowserPropTitleTextSize withDefault:12];
+        self.titleLabel.font=[UIFont systemFontOfSize:textSize];
         [self.toolbar addSubview:self.titleLabel];
     }
 
