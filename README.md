@@ -122,6 +122,7 @@ In addition to InAppBrowser's properties, following properties were added to ful
     + `color` sets title text color in RGBA web hex format. eg. `#fff0f0ff`. Default to black.
     + `staticText` sets static text for title. This property overrides `showPageTitle` (see below).
     + `showPageTitle` when set to true, title of the current web page will be shown.
+     + `textSize` set text size for title ,now just for android..
 + `backButton`
     + `image` sets image for back button. This property references to a **native** image resource, therefore it is platform dependent.
     + `imagePressed` sets image for back button in its pressed state. This property references to a **native** image resource, therefore it is platform dependent.
