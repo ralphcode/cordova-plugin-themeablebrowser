@@ -654,8 +654,8 @@ public class ThemeableBrowser extends CordovaPlugin {
                     }
                 );
 
-                if (back != null) {
-                    back.setEnabled(false);
+                if (forward != null) {
+                    forward.setEnabled(false);
                 }
 
 
