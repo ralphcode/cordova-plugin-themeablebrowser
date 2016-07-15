@@ -492,7 +492,7 @@
       // instead open them with App Store app or Safari
       [[UIApplication sharedApplication] openURL:url];
 
-			NSDictionary *event = @{
+      NSDictionary *event = @{
         @"type": @"ThemeableBrowserExternalOpen",
         @"message": @"External App open While ThemeableBrowser is open"
       };
