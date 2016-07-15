@@ -1380,7 +1380,7 @@
     [self updateButtonDelayed:theWebView];
 
     // Do not iTunes store links from ThemeableBrowser as they do not work
-		// instead open them with App Store app or Safari 
+    // instead open them with App Store app or Safari 
 
     NSString *urlString = [NSString stringWithFormat:@"%@", request.URL];
     NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"(itunes\\.apple\\.com|appsto\\.re)" options:NSRegularExpressionCaseInsensitive error:nil];
