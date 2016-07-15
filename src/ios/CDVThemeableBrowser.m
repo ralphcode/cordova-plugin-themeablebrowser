@@ -1379,6 +1379,18 @@
 
     [self updateButtonDelayed:theWebView];
 
+    // Do not iTunes store links from ThemeableBrowser as they do not work
+
+    NSString *urlString = [NSString stringWithFormat:@"%@", request.URL];
+    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"(itunes\\.apple\\.com|appsto\\.re)" options:NSRegularExpressionCaseInsensitive error:nil];
+    NSTextCheckingResult *match = [regex firstMatchInString:urlString options:0 range:NSMakeRange(0, [urlString length])];
+
+    if (match != nil) {
+      [[UIApplication sharedApplication] openURL:[NSURL URLWithString:urlString]];
+
+      return NO;
+    }
+
     return [self.navigationDelegate webView:theWebView shouldStartLoadWithRequest:request navigationType:navigationType];
 }
 
