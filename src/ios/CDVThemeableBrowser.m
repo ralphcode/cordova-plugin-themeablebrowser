@@ -104,7 +104,7 @@
 
 - (BOOL) isSystemUrl:(NSURL*)url
 {
-    if ([[url host] isEqualToString:@"itunes.apple.com"]) {
+    if ([[url host] isEqualToString:@"itunes.apple.com"] || [[url host] isEqualToString:@"appsto.re"]) {
         return YES;
     }
 
@@ -487,6 +487,19 @@
             [self.commandDelegate sendPluginResult:pluginResult callbackId:scriptCallbackId];
             return NO;
         }
+    } else if ([[url host] isEqualToString:@"itunes.apple.com"] || [[url host] isEqualToString:@"appsto.re"]) {
+      // Do not iTunes store links from ThemeableBrowser as they do not work
+      // instead open them with App Store app or Safari
+      [[UIApplication sharedApplication] openURL:url];
+
+			NSDictionary *event = @{
+        @"type": @"ThemeableBrowserExternalOpen",
+        @"message": @"External App open While ThemeableBrowser is open"
+      };
+
+      [self emitEvent:event];
+
+      return NO;
     } else if ((self.callbackId != nil) && isTopLevelNavigation) {
         // Send a loadstart event for each top-level navigation (includes redirects).
         CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
@@ -1378,19 +1391,6 @@
     }
 
     [self updateButtonDelayed:theWebView];
-
-    // Do not iTunes store links from ThemeableBrowser as they do not work
-    // instead open them with App Store app or Safari 
-
-    NSString *urlString = [NSString stringWithFormat:@"%@", request.URL];
-    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"(itunes\\.apple\\.com|appsto\\.re)" options:NSRegularExpressionCaseInsensitive error:nil];
-    NSTextCheckingResult *match = [regex firstMatchInString:urlString options:0 range:NSMakeRange(0, [urlString length])];
-
-    if (match != nil) {
-      [[UIApplication sharedApplication] openURL:[NSURL URLWithString:urlString]];
-
-      return NO;
-    }
 
     return [self.navigationDelegate webView:theWebView shouldStartLoadWithRequest:request navigationType:navigationType];
 }
