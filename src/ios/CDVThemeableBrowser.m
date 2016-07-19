@@ -62,6 +62,7 @@
 
 @interface CDVThemeableBrowser () {
     BOOL _isShown;
+		NSURL *originalUrl;
 }
 @end
 
@@ -487,17 +488,26 @@
             [self.commandDelegate sendPluginResult:pluginResult callbackId:scriptCallbackId];
             return NO;
         }
-    } else if ([[url host] isEqualToString:@"itunes.apple.com"] || [[url host] isEqualToString:@"appsto.re"]) {
+    } else if (
+      [[url host] isEqualToString:@"itunes.apple.com"]
+        || [[url host] isEqualToString:@"search.itunes.apple.com"]
+          || [[url host] isEqualToString:@"appsto.re"]
+    ) {
       // Do not iTunes store links from ThemeableBrowser as they do not work
       // instead open them with App Store app or Safari
       [[UIApplication sharedApplication] openURL:url];
 
-      NSDictionary *event = @{
-        @"type": @"ThemeableBrowserExternalOpen",
-        @"message": @"External App open While ThemeableBrowser is open"
+      // attempt to detect redirection -- the client can handle what to do
+			// when an external app is opened via redirect, for instance closing
+			// the ThemeableBrowser to prevent blank page from showing
+      if (originalUrl != nil && originalUrl != url) {
+        NSDictionary *event = @{
+          @"type": @"ThemeableBrowserExternalOpenOnRedirect",
+          @"message": @"External App open While ThemeableBrowser is open via redirect"
       };
 
-      [self emitEvent:event];
+        [self emitEvent:event];
+      }
 
       return NO;
     } else if ((self.callbackId != nil) && isTopLevelNavigation) {
@@ -508,6 +518,8 @@
 
         [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackId];
     }
+
+    originalUrl = request.URL;
 
     return YES;
 }
@@ -525,6 +537,8 @@
         CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
                                                       messageAsDictionary:@{@"type":@"loadstop", @"url":url}];
         [pluginResult setKeepCallback:[NSNumber numberWithBool:YES]];
+
+        originalUrl = nil;
 
         [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackId];
     }
