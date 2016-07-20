@@ -111,7 +111,7 @@
 {
     if (
       [[url host] isEqualToString:@"itunes.apple.com"]
-			  || [[url host] isEqualToString:@"search.itunes.apple.com"]
+        || [[url host] isEqualToString:@"search.itunes.apple.com"]
           || [[url host] isEqualToString:@"appsto.re"]
     ) {
         return YES;
@@ -138,7 +138,7 @@
 #endif
         NSURL* absoluteUrl = [[NSURL URLWithString:url relativeToURL:baseUrl] absoluteURL];
 
-				initUrl = absoluteUrl;
+        initUrl = absoluteUrl;
 
         if ([self isSystemUrl:absoluteUrl]) {
             target = kThemeableBrowserTargetSystem;
