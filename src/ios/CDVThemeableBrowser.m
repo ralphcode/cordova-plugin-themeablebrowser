@@ -74,7 +74,7 @@
 - (void)pluginInitialize
 {
     _isShown = NO;
-		_framesOpened = 0;
+    _framesOpened = 0;
     _callbackIdPattern = nil;
 }
 #else
@@ -83,7 +83,7 @@
     self = [super initWithWebView:theWebView];
     if (self != nil) {
         _isShown = NO;
-				_framesOpened = 0;
+        _framesOpened = 0;
         _callbackIdPattern = nil;
     }
 
@@ -499,7 +499,7 @@
             return NO;
         }
     } else if ([self isSystemUrl:url]) {
-      // Do not iTunes store links from ThemeableBrowser as they do not work
+      // Do not allow iTunes store links from ThemeableBrowser as they do not work
       // instead open them with App Store app or Safari
       [[UIApplication sharedApplication] openURL:url];
 
