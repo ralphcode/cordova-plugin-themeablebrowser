@@ -62,7 +62,9 @@
 
 @interface CDVThemeableBrowser () {
     BOOL _isShown;
-		NSURL *originalUrl;
+    int _framesOpened;  // number of frames opened since the last time browser exited
+    NSURL *initUrl;  // initial URL ThemeableBrowser opened with
+    NSURL *originalUrl;
 }
 @end
 
@@ -72,6 +74,7 @@
 - (void)pluginInitialize
 {
     _isShown = NO;
+		_framesOpened = 0;
     _callbackIdPattern = nil;
 }
 #else
@@ -80,6 +83,7 @@
     self = [super initWithWebView:theWebView];
     if (self != nil) {
         _isShown = NO;
+				_framesOpened = 0;
         _callbackIdPattern = nil;
     }
 
@@ -105,7 +109,11 @@
 
 - (BOOL) isSystemUrl:(NSURL*)url
 {
-    if ([[url host] isEqualToString:@"itunes.apple.com"] || [[url host] isEqualToString:@"appsto.re"]) {
+    if (
+      [[url host] isEqualToString:@"itunes.apple.com"]
+			  || [[url host] isEqualToString:@"search.itunes.apple.com"]
+          || [[url host] isEqualToString:@"appsto.re"]
+    ) {
         return YES;
     }
 
@@ -129,6 +137,8 @@
         NSURL* baseUrl = [self.webView.request URL];
 #endif
         NSURL* absoluteUrl = [[NSURL URLWithString:url relativeToURL:baseUrl] absoluteURL];
+
+				initUrl = absoluteUrl;
 
         if ([self isSystemUrl:absoluteUrl]) {
             target = kThemeableBrowserTargetSystem;
@@ -488,27 +498,30 @@
             [self.commandDelegate sendPluginResult:pluginResult callbackId:scriptCallbackId];
             return NO;
         }
-    } else if (
-      [[url host] isEqualToString:@"itunes.apple.com"]
-        || [[url host] isEqualToString:@"search.itunes.apple.com"]
-          || [[url host] isEqualToString:@"appsto.re"]
-    ) {
+    } else if ([self isSystemUrl:url]) {
       // Do not iTunes store links from ThemeableBrowser as they do not work
       // instead open them with App Store app or Safari
       [[UIApplication sharedApplication] openURL:url];
 
-      // attempt to detect redirection -- the client can handle what to do
-			// when an external app is opened via redirect, for instance closing
-			// the ThemeableBrowser to prevent blank page from showing
-      if (originalUrl != nil && originalUrl != url) {
+      // only in the case where a redirect link is opened in a freshly started
+      // ThemeableBrowser frame, trigger ThemeableBrowserRedirectExternalOnOpen
+      // event. This event can be handled in the app-side -- for instance, to
+      // close the ThemeableBrowser as the frame will contain a blank page
+      if (
+        originalUrl != nil
+          && [[originalUrl absoluteString] isEqualToString:[initUrl absoluteString]]
+            && _framesOpened == 1
+      ) {
         NSDictionary *event = @{
-          @"type": @"ThemeableBrowserExternalOpenOnRedirect",
-          @"message": @"External App open While ThemeableBrowser is open via redirect"
-      };
+          @"type": @"ThemeableBrowserRedirectExternalOnOpen",
+          @"message": @"ThemeableBrowser redirected to open an external app on fresh start"
+        };
 
         [self emitEvent:event];
       }
 
+      // do not load content in the web view since this URL is handled by an
+      // external app
       return NO;
     } else if ((self.callbackId != nil) && isTopLevelNavigation) {
         // Send a loadstart event for each top-level navigation (includes redirects).
@@ -519,6 +532,13 @@
         [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackId];
     }
 
+    // originalUrl is used to detect redirect. This works by storing the
+    // request URL of the original frame when it's about to be loaded. A redirect
+    // will cause shouldStartLoadWithRequest to be called again before the
+    // original frame finishes loading (originalUrl becomes nil upon the frame
+    // finishing loading). On second time shouldStartLoadWithRequest
+    // is called, this stored original frame's URL can be compared against
+    // the URL of the new request. A mismatch implies redirect.
     originalUrl = request.URL;
 
     return YES;
@@ -527,6 +547,7 @@
 - (void)webViewDidStartLoad:(UIWebView*)theWebView
 {
     _injectedIframeBridge = NO;
+    _framesOpened++;
 }
 
 - (void)webViewDidFinishLoad:(UIWebView*)theWebView
@@ -538,6 +559,8 @@
                                                       messageAsDictionary:@{@"type":@"loadstop", @"url":url}];
         [pluginResult setKeepCallback:[NSNumber numberWithBool:YES]];
 
+        // once a web view finished loading a frame, reset the stored original
+        // URL of the frame so that it can be used to detect next redirection
         originalUrl = nil;
 
         [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackId];
@@ -572,6 +595,7 @@
     self.callbackId = nil;
     self.callbackIdPattern = nil;
 
+    _framesOpened = 0;
     _isShown = NO;
 }
 
