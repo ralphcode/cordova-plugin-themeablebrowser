@@ -109,15 +109,17 @@
 
 - (BOOL) isSystemUrl:(NSURL*)url
 {
-    if (
-      [[url host] isEqualToString:@"itunes.apple.com"]
-        || [[url host] isEqualToString:@"search.itunes.apple.com"]
-          || [[url host] isEqualToString:@"appsto.re"]
-    ) {
-        return YES;
-    }
+  NSDictionary *systemUrls = @{
+    @"itunes.apple.com": @YES,
+    @"search.itunes.apple.com": @YES,
+    @"appsto.re": @YES
+  };
 
-    return NO;
+  if (systemUrls[[url host]]) {
+    return YES;
+  }
+
+  return NO;
 }
 
 - (void)open:(CDVInvokedUrlCommand*)command
@@ -509,8 +511,8 @@
       // close the ThemeableBrowser as the frame will contain a blank page
       if (
         originalUrl != nil
-          && [[originalUrl absoluteString] isEqualToString:[initUrl absoluteString]]
-            && _framesOpened == 1
+        && [[originalUrl absoluteString] isEqualToString:[initUrl absoluteString]]
+        && _framesOpened == 1
       ) {
         NSDictionary *event = @{
           @"type": @"ThemeableBrowserRedirectExternalOnOpen",
