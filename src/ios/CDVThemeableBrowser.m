@@ -325,7 +325,25 @@ const float MyFinalProgressValue = 0.9f;
         }
     });
 }
+- (void)hide:(CDVInvokedUrlCommand*)command
+{
+    /*
+    if (self.themeableBrowserViewController == nil) {
+        NSLog(@"Tried to hide IAB after it was closed.");
+        return;
+    }
+    if (_previousStatusBarStyle == -1) {
+        NSLog(@"Tried to hide IAB while already hidden");
+        return;
+    }
+    */
 
+    if (self.themeableBrowserViewController != nil) {
+        [[self.themeableBrowserViewController presentingViewController] dismissViewControllerAnimated:YES completion:nil];
+        _isShown = NO;
+        /*_previousStatusBarStyle = -1;*/
+    }
+}
 - (void)openInCordovaWebView:(NSURL*)url withOptions:(NSString*)options
 {
     if ([self.commandDelegate URLIsWhitelisted:url]) {

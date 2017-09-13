@@ -77,6 +77,7 @@
 - (void)injectScriptCode:(CDVInvokedUrlCommand*)command;
 - (void)show:(CDVInvokedUrlCommand*)command;
 - (void)show:(CDVInvokedUrlCommand*)command withAnimation:(BOOL)animated;
+- (void)hide:(CDVInvokedUrlCommand*)command;
 - (void)reload:(CDVInvokedUrlCommand*)command;
 
 @end
