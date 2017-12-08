@@ -924,13 +924,13 @@ const float MyFinalProgressValue = 0.9f;
  
     //Landscape iPhone on iOS 11 automatically overlays the status bar. This pushes the bar down. toolbarY+toolbarHeight
     //self.progressView=[[UIProgressView   alloc] initWithFrame:CGRectMake(0.0, toolbarY+toolbarHeight+[self getStatusBarOffset], self.view.bounds.size.width, 20.0)];
-    self.progressView=[[UIProgressView   alloc] initWithFrame:CGRectMake(0.0, 0.0, self.view.bounds.size.width, toolbarHeight)];
+    self.progressView=[[UIProgressView   alloc] initWithFrame:CGRectMake(0.0, (toolbarIsAtBottom ? 0 : (toolbarHeight - 2.0)), self.view.bounds.size.width, 2.0)];
     self.progressView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
     self.progressView.progressViewStyle=UIProgressViewStyleDefault;
     self.progressView.progressTintColor=[CDVThemeableBrowserViewController colorFromRGBA:[self getStringFromDict:_browserOptions.browserProgress withKey: kThemeableBrowserPropProgressColor withDefault:@"#0000FF"]];
     self.progressView.trackTintColor=[CDVThemeableBrowserViewController colorFromRGBA:[self getStringFromDict:_browserOptions.browserProgress withKey:kThemeableBrowserPropProgressBgColor withDefault:@"#808080"]];
     if ([self getBoolFromDict:_browserOptions.browserProgress withKey:kThemeableBrowserPropShowProgress]) {
-        //[self.view addSubview:self.progressView];
+        //[self.view addSubview:self.progressView]; Add to toolbar so locaiton is relative
        [self.toolbar addSubview:self.progressView];
     }
     // [self.view addSubview:self.addressLabel];
