@@ -1441,8 +1441,13 @@ const float MyFinalProgressValue = 0.9f;
         if (event) {
             NSMutableDictionary* dict = [NSMutableDictionary new];
             [dict setObject:event forKey:@"type"];
-            [dict setObject:[self.navigationDelegate.themeableBrowserViewController.currentURL absoluteString] forKey:@"url"];
-
+            
+            //*** Terminating app due to uncaught exception 'NSInvalidArgumentException', reason: '*** -[__NSDictionaryM setObject:forKey:]: object cannot be nil (key: url)'
+            NSString* currentURL = [self.navigationDelegate.themeableBrowserViewController.currentURL absoluteString];
+            if(currentURL != nil && [currentURL length] != 0) {
+                [dict setObject:currentURL forKey:@"url"];
+            }
+         
             if (index) {
                 [dict setObject:index forKey:@"index"];
             }
