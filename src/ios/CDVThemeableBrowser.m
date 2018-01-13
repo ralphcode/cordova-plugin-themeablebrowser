@@ -703,9 +703,13 @@ const float MyFinalProgressValue = 0.9f;
     BOOL toolbarIsAtBottom = ![_browserOptions.toolbarposition isEqualToString:kThemeableBrowserToolbarBarPositionTop];
     NSDictionary* toolbarProps = _browserOptions.toolbar;
     CGFloat toolbarHeight = [self getFloatFromDict:toolbarProps withKey:kThemeableBrowserPropHeight withDefault:TOOLBAR_DEF_HEIGHT];
+    CGFloat toolbarY = toolbarIsAtBottom ? self.view.bounds.size.height - toolbarHeight : 0.0;
+   
     if (!_browserOptions.fullscreen) {
         webViewBounds.size.height -= toolbarHeight;
+        webViewBounds.origin.y += toolbarHeight + toolbarY + 20;
     }
+ 
     self.webView = [[UIWebView alloc] initWithFrame:webViewBounds];
 
     self.webView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
@@ -739,9 +743,8 @@ const float MyFinalProgressValue = 0.9f;
     self.spinner.userInteractionEnabled = NO;
     [self.spinner stopAnimating];
 
-    CGFloat toolbarY = toolbarIsAtBottom ? self.view.bounds.size.height - toolbarHeight : 0.0;
-    CGRect toolbarFrame = CGRectMake(0.0, toolbarY, self.view.bounds.size.width, toolbarHeight);
-
+    CGRect toolbarFrame = CGRectMake(0.0, toolbarY, self.view.bounds.size.width, toolbarHeight);   
+ 
     self.toolbar = [[UIView alloc] initWithFrame:toolbarFrame];
     self.toolbar.alpha = 1.000;
     self.toolbar.autoresizesSubviews = YES;
@@ -754,7 +757,16 @@ const float MyFinalProgressValue = 0.9f;
     self.toolbar.opaque = NO;
     self.toolbar.userInteractionEnabled = YES;
     self.toolbar.backgroundColor = [CDVThemeableBrowserViewController colorFromRGBA:[self getStringFromDict:toolbarProps withKey:kThemeableBrowserPropColor withDefault:@"#ffffffff"]];
-
+    
+    //RS: TODO; EXTEND WITH OPTIONS FROM UI
+    if (!toolbarIsAtBottom) {
+     //Add Bottom Border;
+     CALayer *bottomBorder = [CALayer layer];
+     bottomBorder.backgroundColor = [UIColor colorWithRed:221/255.0f green:221/255.0f blue:221/255.0f alpha:1.0f].CGColor;
+     bottomBorder.frame = CGRectMake(0,self.toolbar.frame.size.height - 1.0,self.toolbar.frame.size.width,1.0);
+     [self.toolbar.layer addSublayer:bottomBorder];
+    }
+ 
     if (toolbarProps[kThemeableBrowserPropImage] || toolbarProps[kThemeableBrowserPropWwwImage]) {
         UIImage *image = [self getImage:toolbarProps[kThemeableBrowserPropImage]
                                altPath:toolbarProps[kThemeableBrowserPropWwwImage]
@@ -1167,7 +1179,7 @@ const float MyFinalProgressValue = 0.9f;
         if ([toolbarPosition isEqualToString:kThemeableBrowserToolbarBarPositionTop]) {
             toolbarFrame.origin.y = 0;
             if (!_browserOptions.fullscreen) {
-                webViewBounds.origin.y += toolbarFrame.size.height;
+                webViewBounds.origin.y += toolbarFrame.size.height + toolbarFrame.origin.y + 20;
             }
             [self setWebViewFrame:webViewBounds];
         } else {
