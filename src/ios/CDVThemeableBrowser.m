@@ -707,7 +707,9 @@ const float MyFinalProgressValue = 0.9f;
    
     if (!_browserOptions.fullscreen) {
         webViewBounds.size.height -= toolbarHeight;
-        webViewBounds.origin.y += toolbarHeight + toolbarY + 20;
+        webViewBounds.origin.y += toolbarHeight + toolbarY + 40.0;
+    } else {
+        webViewBounds.origin.y = 220.0;
     }
  
     self.webView = [[UIWebView alloc] initWithFrame:webViewBounds];
@@ -1179,7 +1181,9 @@ const float MyFinalProgressValue = 0.9f;
         if ([toolbarPosition isEqualToString:kThemeableBrowserToolbarBarPositionTop]) {
             toolbarFrame.origin.y = 0;
             if (!_browserOptions.fullscreen) {
-                webViewBounds.origin.y += toolbarFrame.size.height + toolbarFrame.origin.y + 20;
+                webViewBounds.origin.y += toolbarFrame.size.height + toolbarFrame.origin.y + 40.0;
+            } else {
+                webViewBounds.origin.y += 120.0;
             }
             [self setWebViewFrame:webViewBounds];
         } else {
