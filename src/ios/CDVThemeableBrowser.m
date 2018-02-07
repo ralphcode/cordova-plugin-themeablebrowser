@@ -17,6 +17,8 @@
  under the License.
  */
 
+ #define IS_IPHONEX_PORT (([[UIScreen mainScreen] bounds].size.height-812)?NO:YES)
+
 #import "CDVThemeableBrowser.h"
 #import <Cordova/CDVPluginResult.h>
 #import <Cordova/CDVUserAgentUtil.h>
@@ -1400,11 +1402,16 @@ const float MyFinalProgressValue = 0.9f;
 // change that value.
 //
 - (float) getStatusBarOffset {
-    return 0; //RS: NOW USING UIWINDOW WE SIT ABOVE THE STATUS BAR?
- 
-    CGRect statusBarFrame = [[UIApplication sharedApplication] statusBarFrame];
-    float statusBarOffset = IsAtLeastiOSVersion(@"7.0") ? MIN(statusBarFrame.size.width, statusBarFrame.size.height) : 0.0;
-    return statusBarOffset;
+  
+   //RS: NOW USING UIWINDOW WE SIT ABOVE THE STATUS BAR, unless iphone x in portrait
+   if (IS_IPHONEX_PORT) {
+     CGRect statusBarFrame = [[UIApplication sharedApplication] statusBarFrame];
+     float statusBarOffset = IsAtLeastiOSVersion(@"7.0") ? MIN(statusBarFrame.size.width, statusBarFrame.size.height) : 0.0;
+     return statusBarOffset;
+   } else {
+    return 0; 
+   }
+
 }
 
 - (void) rePositionViews {
