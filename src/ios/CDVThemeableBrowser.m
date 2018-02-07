@@ -341,7 +341,20 @@ const float MyFinalProgressValue = 0.9f;
     // Run later to avoid the "took a long time" log message.
     dispatch_async(dispatch_get_main_queue(), ^{
         if (self.themeableBrowserViewController != nil) {
-            [self.viewController presentViewController:nav animated:animated completion:nil];
+           //[self.viewController presentViewController:nav animated:animated completion:nil];
+         
+         
+           //RS:FIX CB-11136: (ios) Fix InAppBrowser when closing with WKWebView
+           //https://github.com/manucorporat/cordova-plugin-inappbrowser/commit/f3a8fbe1c0737138d4b0e1b358b1c2d6d5d2c16b
+           CGRect frame = [[UIScreen mainScreen] bounds];
++          UIWindow *tmpWindow = [[UIWindow alloc] initWithFrame:frame];
++          UIViewController *tmpController = [[UIViewController alloc] init];
++          [tmpWindow setRootViewController:tmpController];
++          [tmpWindow setWindowLevel:UIWindowLevelAlert];
++
++          [tmpWindow makeKeyAndVisible];
++          [tmpController presentViewController:nav animated:YES completion:nil];
+         
         }
     });
 }
