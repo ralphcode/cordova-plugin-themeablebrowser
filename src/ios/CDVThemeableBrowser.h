@@ -20,7 +20,9 @@
  #import <Cordova/CDVPlugin.h>
  #import <Cordova/CDVInvokedUrlCommand.h>
  #import <Cordova/CDVScreenOrientationDelegate.h>
- 
+ #import <Foundation/Foundation.h>
+ #import <UIKit/UIKit.h>
+
  #ifdef __CORDOVA_4_0_0
      #import <Cordova/CDVUIWebViewDelegate.h>
  #else
