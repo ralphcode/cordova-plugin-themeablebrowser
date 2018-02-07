@@ -1400,6 +1400,8 @@ const float MyFinalProgressValue = 0.9f;
 // change that value.
 //
 - (float) getStatusBarOffset {
+    return 0; //RS: NOW USING UIWINDOW WE SIT ABOVE THE STATUS BAR?
+ 
     CGRect statusBarFrame = [[UIApplication sharedApplication] statusBarFrame];
     float statusBarOffset = IsAtLeastiOSVersion(@"7.0") ? MIN(statusBarFrame.size.width, statusBarFrame.size.height) : 0.0;
     return statusBarOffset;
