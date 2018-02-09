@@ -1260,6 +1260,26 @@ const float MyFinalProgressValue = 0.9f;
         } else {
             [[self parentViewController] dismissViewControllerAnimated:!_browserOptions.disableAnimation completion:nil];
         }
+        
+        //Final remove call to ensure the rootViewController is removed to avoid hanging media playbacks.
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (self.window.rootViewController != nil) {
+               if ([self.window.rootViewController.view respondsToSelector:@selector(removeFromSuperview)]) {
+                   [self.window.rootViewController.view removeFromSuperview];
+               }
+            }
+         
+            //Final check on View;
+            dispatch_async(dispatch_get_main_queue(), ^{
+               if (self.webView != nil) {
+                 if ([self.webView respondsToSelector:@selector(removeFromSuperview)]) {
+                   [self.webView removeFromSuperview];
+                 }
+               }
+            });
+         
+        });
+    
     });
 
 }
