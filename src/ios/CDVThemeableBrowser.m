@@ -1263,9 +1263,10 @@ const float MyFinalProgressValue = 0.9f;
         
         //Final remove call to ensure the rootViewController is removed to avoid hanging media playbacks.
         dispatch_async(dispatch_get_main_queue(), ^{
-            if (self.window.rootViewController != nil) {
-               if ([self.window.rootViewController.view respondsToSelector:@selector(removeFromSuperview)]) {
-                   [self.window.rootViewController.view removeFromSuperview];
+            UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
+            if (keyWindow.rootViewController != nil) {
+               if ([keyWindow.rootViewController.view respondsToSelector:@selector(removeFromSuperview)]) {
+                   [keyWindow.rootViewController.view removeFromSuperview];
                }
             }
          
