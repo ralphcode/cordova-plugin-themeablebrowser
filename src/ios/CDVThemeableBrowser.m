@@ -1420,9 +1420,7 @@ const float MyFinalProgressValue = 0.9f;
 //Fix lingering Media Windows;
 - (void)viewWillDisappear:(BOOL)animated
 {
-    [self.themeableBrowserViewController.webView loadHTMLString:@"" baseURL:nil];
     [self.webView loadHTMLString:@"" baseURL:nil];
-
     [super viewWillDisappear:animated];
 }
 
