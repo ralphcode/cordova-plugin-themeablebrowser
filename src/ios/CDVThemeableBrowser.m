@@ -1417,6 +1417,14 @@ const float MyFinalProgressValue = 0.9f;
     [super viewWillAppear:animated];
 }
 
+//Fix lingering Media Windows;
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [self.webView loadHTMLString:nil baseURL:nil];
+    [super viewWillDisappear:animated];
+}
+
+
 //
 // On iOS 7 the status bar is part of the view's dimensions, therefore it's height has to be taken into account.
 // The height of it could be hardcoded as 20 pixels, but that would assume that the upcoming releases of iOS won't
