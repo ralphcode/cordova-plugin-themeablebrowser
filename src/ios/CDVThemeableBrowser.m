@@ -1420,7 +1420,9 @@ const float MyFinalProgressValue = 0.9f;
 //Fix lingering Media Windows;
 - (void)viewWillDisappear:(BOOL)animated
 {
-    [self.webView loadHTMLString:nil baseURL:nil];
+    [self.themeableBrowserViewController.webView loadHTMLString:@"" baseURL:nil];
+    [self.webView loadHTMLString:@"" baseURL:nil];
+
     [super viewWillDisappear:animated];
 }
 
@@ -1846,7 +1848,7 @@ const float MyFinalProgressValue = 0.9f;
         self.clearsessioncache = NO;
 
         self.zoom = YES;
-        self.mediaplaybackrequiresuseraction = NO;
+        self.mediaplaybackrequiresuseraction = YES;
         self.allowinlinemediaplayback = NO;
         self.keyboarddisplayrequiresuseraction = YES;
         self.suppressesincrementalrendering = NO;
