@@ -369,13 +369,13 @@ const float MyFinalProgressValue = 0.9f;
             
             
             //New Try to add the view to the Cordova view; https://github.com/apache/cordova-plugin-inappbrowser/pull/162/files
-            UIView* inAppView = self.viewController.view;
-            [self.viewController addChildViewController:self.viewController];
-            [self.viewController.view addSubview:self.viewController.view];
+            UIView* inAppView = self.themeableBrowserViewController.view;
+            [self.viewController addChildViewController:self.themeableBrowserViewController];
+            [self.viewController.view addSubview:self.themeableBrowserViewController.view];
             inAppView.transform = CGAffineTransformMakeTranslation(0, inAppView.frame.size.height);
-        
+
             [UIView animateWithDuration:0.4 delay:0 usingSpringWithDamping:0.9 initialSpringVelocity:0.1 options:0 animations:^{
-                                inAppView.transform = CGAffineTransformIdentity;
+                            inAppView.transform = CGAffineTransformIdentity;
             } completion:nil];
             
         }
