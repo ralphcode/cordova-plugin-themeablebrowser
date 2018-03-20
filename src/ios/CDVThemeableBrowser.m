@@ -1299,33 +1299,25 @@ const float MyFinalProgressValue = 0.9f;
         }*/
         
     
-        /*if ([[self presentingViewController] parentViewController]) {
+        /* Official: https://github.com/apache/cordova-plugin-inappbrowser/pull/162/files */
+        if ([self parentViewController]) {
             [UIView animateWithDuration:0.3 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
-                [self presentingViewController].view.transform = CGAffineTransformMakeTranslation(0, [self presentingViewController].view.frame.size.height);
+                [self.view.transform = CGAffineTransformMakeTranslation(0, [self presentingViewController].view.frame.size.height);
             } completion:^(BOOL finished) {
-                [[self presentingViewController].view removeFromSuperview];
-                [[self presentingViewController] removeFromParentViewController];
+                
+                if (self.webView != nil) {
+                    if ([self.webView respondsToSelector:@selector(removeFromSuperview)]) {
+                        [self.webView removeFromSuperview];
+                        self.webView = nil;
+                    }
+                }
+                
+                [self.view removeFromSuperview];
+                [self removeFromParentViewController];
                 [self presentingViewController].view = nil;
             }];
-        } else {
-            //?
-        }*/
-        
-        /* Official: https://github.com/apache/cordova-plugin-inappbrowser/pull/162/files */
-        if (weakSelf.themeableBrowserViewController != nil) {
-            [self emitLog:kThemeableBrowserEmitLog withMessage:@"closing web view"];
-            
-            UIView* inAppView = self.themeableBrowserViewController.view;
-            [self.viewController addChildViewController:self.themeableBrowserViewController];
-            [self.viewController.view addSubview:self.themeableBrowserViewController.view];
-            inAppView.transform = CGAffineTransformMakeTranslation(0, inAppView.frame.size.height);
-            
-            [UIView animateWithDuration:0.4 delay:0 usingSpringWithDamping:0.9 initialSpringVelocity:0.1 options:0 animations:^{
-                inAppView.transform = CGAffineTransformIdentity;
-            } completion:nil];
-        } else {
-            [self emitLog:kThemeableBrowserEmitLog withMessage:@"unable to closing web view (themeableBrowserViewController nil)"];
         }
+        
         
 
         //FAIL: SEEL ABOVE: https://github.com/manucorporat/cordova-plugin-inappbrowser/commit/f3a8fbe1c0737138d4b0e1b358b1c2d6d5d2c16b
