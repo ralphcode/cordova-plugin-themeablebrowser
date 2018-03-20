@@ -1302,7 +1302,7 @@ const float MyFinalProgressValue = 0.9f;
         /* Official: https://github.com/apache/cordova-plugin-inappbrowser/pull/162/files */
         if ([[self presentingViewController] parentViewController]) {
             [UIView animateWithDuration:0.3 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
-                [self presentingViewController].view.transform = CGAffineTransformMakeTranslation(0, weakSelf.view.frame.size.height);
+                [self presentingViewController].view.transform = CGAffineTransformMakeTranslation(0, [self presentingViewController].view.frame.size.height);
             } completion:^(BOOL finished) {
                 [[self presentingViewController].view removeFromSuperview];
                 [[self presentingViewController] removeFromParentViewController];
