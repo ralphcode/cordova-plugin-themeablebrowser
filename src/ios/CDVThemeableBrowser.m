@@ -189,6 +189,8 @@ const float MyFinalProgressValue = 0.9f;
 {
     CDVThemeableBrowserOptions* obj = [[CDVThemeableBrowserOptions alloc] init];
 
+    [self emitLog:kThemeableBrowserEmitLog withMessage: [NSString stringWithFormat:@"parseOptions::: Options %d", [options length]] ];
+    
     if (options && [options length] > 0) {
         // Min support, iOS 5. We will use the JSON parser that comes with iOS
         // 5.
@@ -224,7 +226,7 @@ const float MyFinalProgressValue = 0.9f;
     
     CDVThemeableBrowserOptions* browserOptions = [self parseOptions:options];
 
-    [self emitLog:kThemeableBrowserEmitLog withMessage: browserOptions.mediaplaybackrequiresuseraction];
+    [self emitLog:kThemeableBrowserEmitLog withMessage:  [NSString stringWithFormat:@"mediaplaybackrequiresuseraction %s", browserOptions.mediaplaybackrequiresuseraction ? "true" : "false"] ];
     
     // Among all the options, there are a few that ThemedBrowser would like to
     // disable, since ThemedBrowser's purpose is to provide an integrated look
