@@ -353,9 +353,11 @@ const float MyFinalProgressValue = 0.9f;
     dispatch_async(dispatch_get_main_queue(), ^{
         if (self.themeableBrowserViewController != nil) {
            //[self.viewController presentViewController:nav animated:animated completion:nil];
+            
+            
            //RS:FIX CB-11136: (ios) Fix InAppBrowser when closing with WKWebView
            //https://github.com/manucorporat/cordova-plugin-inappbrowser/commit/f3a8fbe1c0737138d4b0e1b358b1c2d6d5d2c16b
-         
+           /* FAIL - THIS SITS ABOVE MEDIA WINDOWS WHICH OPEN TO WATCH VIDEOS - these kill the app if left open
            CGRect frame = [[UIScreen mainScreen] bounds];
            UIWindow *tmpWindow = [[UIWindow alloc] initWithFrame:frame];
            UIViewController *tmpController = [[UIViewController alloc] init];
@@ -363,7 +365,19 @@ const float MyFinalProgressValue = 0.9f;
           [tmpWindow setWindowLevel:UIWindowLevelAlert];
 
           [tmpWindow makeKeyAndVisible];
-          [tmpController presentViewController:nav animated:YES completion:nil];
+          [tmpController presentViewController:nav animated:YES completion:nil];*/
+            
+            
+            //New Try to add the view to the Cordova view; https://github.com/apache/cordova-plugin-inappbrowser/pull/162/files
+            UIView* inAppView = self.viewController.view;
+            [self.viewController addChildViewController:self.viewController];
+            [self.viewController.view addSubview:self.viewController.view];
+            inAppView.transform = CGAffineTransformMakeTranslation(0, inAppView.frame.size.height);
+        
+            [UIView animateWithDuration:0.4 delay:0 usingSpringWithDamping:0.9 initialSpringVelocity:0.1 options:0 animations:^{
+                                inAppView.transform = CGAffineTransformIdentity;
+            } completion:nil];
+            
         }
     });
 }
@@ -615,6 +629,8 @@ const float MyFinalProgressValue = 0.9f;
 
 - (void)browserExit
 {
+    [self emitLog:kThemeableBrowserEmitLog withMessage:@"themeablebrowser::: browserExit" ];
+    
     //Clear the webview;
     [self.themeableBrowserViewController.webView loadHTMLString:@"" baseURL:nil];
     
@@ -1276,14 +1292,30 @@ const float MyFinalProgressValue = 0.9f;
 
     // Run later to avoid the "took a long time" log message.
     dispatch_async(dispatch_get_main_queue(), ^{
-        if ([self respondsToSelector:@selector(presentingViewController)]) {
+        /*if ([self respondsToSelector:@selector(presentingViewController)]) {
             [[self presentingViewController] dismissViewControllerAnimated:!_browserOptions.disableAnimation completion:nil];
         } else {
             [[self parentViewController] dismissViewControllerAnimated:!_browserOptions.disableAnimation completion:nil];
+        }*/
+        
+    
+        /* Official: https://github.com/apache/cordova-plugin-inappbrowser/pull/162/files */
+        if ([[self presentingViewController] parentViewController]) {
+            [UIView animateWithDuration:0.3 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+                [self presentingViewController].view.transform = CGAffineTransformMakeTranslation(0, weakSelf.view.frame.size.height);
+            } completion:^(BOOL finished) {
+                [[self presentingViewController].view removeFromSuperview];
+                [[self presentingViewController] removeFromParentViewController];
+                [self presentingViewController].view = nil;
+            }];
+        } else {
+            //?
         }
         
+
+        //FAIL: SEEL ABOVE: https://github.com/manucorporat/cordova-plugin-inappbrowser/commit/f3a8fbe1c0737138d4b0e1b358b1c2d6d5d2c16b
         //Final remove call to ensure the rootViewController is removed to avoid hanging media playbacks.
-        dispatch_async(dispatch_get_main_queue(), ^{
+        /*dispatch_async(dispatch_get_main_queue(), ^{
             UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
             if (keyWindow.rootViewController != nil) {
                if ([keyWindow.rootViewController.view respondsToSelector:@selector(removeFromSuperview)]) {
@@ -1300,8 +1332,7 @@ const float MyFinalProgressValue = 0.9f;
                  }
                }
             });
-         
-        });
+        });*/
     
     });
 
