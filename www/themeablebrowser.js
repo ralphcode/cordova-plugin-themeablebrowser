@@ -113,6 +113,7 @@ exports.open = function(strUrl, strWindowName, strWindowFeatures, callbacks) {
 
 exports.EVT_ERR = 'ThemeableBrowserError';
 exports.EVT_WRN = 'ThemeableBrowserWarning';
+exports.EVT_LOG = 'ThemeableBrowserLog';
 exports.ERR_CRITICAL = 'critical';
 exports.ERR_LOADFAIL = 'loadfail';
 exports.WRN_UNEXPECTED = 'unexpected';
