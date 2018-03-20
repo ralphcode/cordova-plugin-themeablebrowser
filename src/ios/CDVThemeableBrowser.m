@@ -57,6 +57,7 @@
 
 #define    kThemeableBrowserEmitError @"ThemeableBrowserError"
 #define    kThemeableBrowserEmitWarning @"ThemeableBrowserWarning"
+#define    kThemeableBrowserEmitLog @"ThemeableBrowserLog"
 #define    kThemeableBrowserEmitCodeCritical @"critical"
 #define    kThemeableBrowserEmitCodeLoadFail @"loadfail"
 #define    kThemeableBrowserEmitCodeUnexpected @"unexpected"
@@ -219,8 +220,12 @@ const float MyFinalProgressValue = 0.9f;
 
 - (void)openInThemeableBrowser:(NSURL*)url withOptions:(NSString*)options
 {
+    [self emitLog:kThemeableBrowserEmitLog withMessage:@"openInThemeableBrowser"];
+    
     CDVThemeableBrowserOptions* browserOptions = [self parseOptions:options];
 
+    [self emitLog:kThemeableBrowserEmitLog withMessage: browserOptions.mediaplaybackrequiresuseraction];
+    
     // Among all the options, there are a few that ThemedBrowser would like to
     // disable, since ThemedBrowser's purpose is to provide an integrated look
     // and feel that is consistent across platforms. We'd do this hack to
@@ -305,7 +310,7 @@ const float MyFinalProgressValue = 0.9f;
 
     // UIWebView options
     self.themeableBrowserViewController.webView.scalesPageToFit = browserOptions.zoom;
-    self.themeableBrowserViewController.webView.mediaPlaybackRequiresUserAction = browserOptions.mediaplaybackrequiresuseraction;
+    self.themeableBrowserViewController.webView.mediaPlaybackRequiresUserAction = browserOptions.mediaplaybackrequiresuseraction || browserOptions.mediaplaybackrequiresuseraction == @"yes";
     self.themeableBrowserViewController.webView.allowsInlineMediaPlayback = browserOptions.allowinlinemediaplayback;
     if (IsAtLeastiOSVersion(@"6.0")) {
         self.themeableBrowserViewController.webView.keyboardDisplayRequiresUserAction = browserOptions.keyboarddisplayrequiresuseraction;
@@ -608,6 +613,9 @@ const float MyFinalProgressValue = 0.9f;
 
 - (void)browserExit
 {
+    //Clear the webview;
+    [self.themeableBrowserViewController.webView loadHTMLString:@"" baseURL:nil];
+    
     if (self.callbackId != nil) {
         CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
                                                       messageAsDictionary:@{@"type":@"exit"}];
@@ -656,6 +664,17 @@ const float MyFinalProgressValue = 0.9f;
        @"message": message
     };
 
+    [self emitEvent:event];
+}
+
+- (void)emitLog:(NSString*)code withMessage:(NSString*)message
+{
+    NSDictionary *event = @{
+                            @"type": kThemeableBrowserEmitLog,
+                            @"code": code,
+                            @"message": message
+                        };
+    
     [self emitEvent:event];
 }
 
@@ -1275,6 +1294,7 @@ const float MyFinalProgressValue = 0.9f;
                if (self.webView != nil) {
                  if ([self.webView respondsToSelector:@selector(removeFromSuperview)]) {
                    [self.webView removeFromSuperview];
+                     self.webView = nil;
                  }
                }
             });
@@ -1420,7 +1440,7 @@ const float MyFinalProgressValue = 0.9f;
 //Fix lingering Media Windows;
 - (void)viewWillDisappear:(BOOL)animated
 {
-    [self.webView loadHTMLString:@"" baseURL:nil];
+    //[self.webView loadHTMLString:@"" baseURL:nil];
     [super viewWillDisappear:animated];
 }
 
