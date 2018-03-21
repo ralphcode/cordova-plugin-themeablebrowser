@@ -1492,14 +1492,14 @@ const float MyFinalProgressValue = 0.9f;
 //
 - (float) getStatusBarOffset {
   
-   //RS: NOW USING UIWINDOW WE SIT ABOVE THE STATUS BAR, unless iphone x in portrait
-   if (IS_IPHONEX_PORT) {
+   //RS: NOW USING UIWINDOW WE SIT ABOVE THE STATUS BAR, unless iphone x in portrait - REMOVED AS NOW WE ARE IN VC AGAIN
+   //if (IS_IPHONEX_PORT) {
      CGRect statusBarFrame = [[UIApplication sharedApplication] statusBarFrame];
      float statusBarOffset = IsAtLeastiOSVersion(@"7.0") ? MIN(statusBarFrame.size.width, statusBarFrame.size.height) : 0.0;
      return statusBarOffset;
-   } else {
-    return 0; 
-   }
+   //} else {
+   // return 0;
+   //}
 
 }
 
