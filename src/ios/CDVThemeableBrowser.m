@@ -534,6 +534,11 @@ const float MyFinalProgressValue = 0.9f;
             // The message should be a JSON-encoded array of the result of the script which executed.
             if ((scriptResult != nil) && ([scriptResult length] > 1)) {
                 scriptResult = [scriptResult substringFromIndex:1];
+             
+                //Fix to remove line-end unicode issues in iOS
+                scriptResult = [scriptResult stringByReplacingOccurrencesOfString:@"\u2028" withString:@"\n"];
+                scriptResult = [scriptResult stringByReplacingOccurrencesOfString:@"\u2029" withString:@"\n"];
+             
                 NSData* decodedResult = [NSJSONSerialization JSONObjectWithData:[scriptResult dataUsingEncoding:NSUTF8StringEncoding] options:kNilOptions error:&error];
                 if ((error == nil) && [decodedResult isKindOfClass:[NSArray class]]) {
                     pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:(NSArray*)decodedResult];
