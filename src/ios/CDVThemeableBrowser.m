@@ -1479,13 +1479,27 @@ const float MyFinalProgressValue = 0.9f;
     }
     [self rePositionViews];
 
+    // Set the delegate again in case we need it
+    if (self.webview.delegate == nil) { 
+      self.webview.delegate = self;
+    }
+
     [super viewWillAppear:animated];
 }
 
 //Fix lingering Media Windows;
 - (void)viewWillDisappear:(BOOL)animated
 {
-    //[self.webView loadHTMLString:@"" baseURL:nil];
+    // BREAKING CHANGE!! THIS WILL BREAK THE SHOW/HIDE FUNCTIONALITY
+    // https://stackoverflow.com/questions/35430732/ios-webkitlegacy-crashes
+   
+    // Clear the view;
+    [self.webView loadHTMLString:@"" baseURL:nil];
+    self.webview.delegate = nil;
+    
+    // Kill the loading to stop crashes after we've closed
+    [self.webview stopLoading];
+    
     [super viewWillDisappear:animated];
 }
 
