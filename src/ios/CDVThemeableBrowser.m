@@ -185,6 +185,15 @@ const float MyFinalProgressValue = 0.9f;
     }
 }
 
+- (void)stop:(CDVInvokedUrlCommand*)command
+{
+    if (self.themeableBrowserViewController && self.themeableBrowserViewController.webView) {
+        if ([self.themeableBrowserViewController.webView isLoading]) {
+            [self.themeableBrowserViewController.webView stopLoading]
+        }
+    }
+}
+
 - (CDVThemeableBrowserOptions*)parseOptions:(NSString*)options
 {
     CDVThemeableBrowserOptions* obj = [[CDVThemeableBrowserOptions alloc] init];
