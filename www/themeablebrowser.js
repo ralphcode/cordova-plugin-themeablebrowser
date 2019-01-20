@@ -80,6 +80,11 @@ ThemeableBrowser.prototype = {
             throw new Error('insertCSS requires exactly one of code or file to be specified');
         }
         return this;
+    },
+   
+   getBody: function(cb) {
+        exec(cb, null, 'ThemeableBrowser', 'getBody');
+        return this;
     }
 };
 
