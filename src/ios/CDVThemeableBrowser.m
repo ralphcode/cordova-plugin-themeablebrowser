@@ -189,7 +189,7 @@ const float MyFinalProgressValue = 0.9f;
 {
     if (self.themeableBrowserViewController && self.themeableBrowserViewController.webView) {
         if ([self.themeableBrowserViewController.webView isLoading]) {
-            [self.themeableBrowserViewController.webView stopLoading]
+            [self.themeableBrowserViewController.webView stopLoading];
         }
     }
 }
