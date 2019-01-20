@@ -255,6 +255,16 @@ public class ThemeableBrowser extends CordovaPlugin {
                     }
                 });
             }
+        } 
+        else if (action.equals("stop")) {
+            if (inAppWebView != null) {
+                this.cordova.getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        inAppWebView.stopLoading();
+                    }
+                });
+            }
         }
         else {
             return false;
