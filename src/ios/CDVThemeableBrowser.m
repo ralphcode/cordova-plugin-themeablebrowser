@@ -189,19 +189,29 @@ const float MyFinalProgressValue = 0.9f;
 {
     self.callbackId = command.callbackId;
     if (self.callbackId != nil) {
-        NSString *html = [self.themeableBrowserViewController.webView stringByEvaluatingJavaScriptFromString: 
-                                                      @"document.documentElement.innerHTML"];
+      NSString *html = nil;
      
-        CDVPluginResult* pluginResult;
-        if (html != nil) {
-            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
-                                                          messageAsDictionary:@{@"body": html}];
-        } else {
-            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_JSON_EXCEPTION]; 
-        }
-                            
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackId];
-        self.callbackId = nil;
+      @try {
+          html = [self.themeableBrowserViewController.webView stringByEvaluatingJavaScriptFromString: 
+                                                      @"document.documentElement.innerHTML"];
+       }
+       @catch (NSException *exception) {
+          NSLog(@"%@", exception.reason);
+          html = nil;
+       }
+       @finally {
+          CDVPluginResult* pluginResult;
+          if (html != nil) {
+              pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
+                                                            messageAsDictionary:@{@"body": html}];
+          } else {
+              pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_JSON_EXCEPTION]; 
+          }
+
+          [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackId];
+          self.callbackId = nil;
+       }
+
     }
 }
 
