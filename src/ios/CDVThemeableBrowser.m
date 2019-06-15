@@ -195,7 +195,7 @@ const float MyFinalProgressValue = 0.9f;
         CDVPluginResult* pluginResult;
         if (html != nil) {
             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
-                                                          messageAsDictionary:@{@"body": html"}];
+                                                          messageAsDictionary:@{@"body": html}];
         } else {
             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_JSON_EXCEPTION]; 
         }
