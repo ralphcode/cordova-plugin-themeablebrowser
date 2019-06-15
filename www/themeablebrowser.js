@@ -63,8 +63,8 @@ ThemeableBrowser.prototype = {
         }
         return this;
     },
-    getBody: function(cb) {
-       exec(cb, null, 'ThemeableBrowser', 'getBody', [!!cb]);
+    getBody: function(cb, cberror) {
+       exec(cb, cberror, 'ThemeableBrowser', 'getBody', [!!cb, !!cberror]);
        return this;
     },
     executeScript: function(injectDetails, cb) {
