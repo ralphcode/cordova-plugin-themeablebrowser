@@ -279,7 +279,7 @@ public class ThemeableBrowser extends CordovaPlugin {
 
                               PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, obj);
                               pluginResult.setKeepCallback(true);
-                              this.callbackContext.sendPluginResult(pluginResult);
+                              callbackContext.sendPluginResult(pluginResult);
                           }
                   });
             }
