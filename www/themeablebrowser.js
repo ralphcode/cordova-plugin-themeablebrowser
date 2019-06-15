@@ -63,7 +63,10 @@ ThemeableBrowser.prototype = {
         }
         return this;
     },
-
+    getBody: function(cb) {
+       exec(cb, null, 'ThemeableBrowser', 'getBody', [!!cb]);
+       return this;
+    },
     executeScript: function(injectDetails, cb) {
         if (injectDetails.code) {
             exec(cb, null, 'ThemeableBrowser', 'injectScriptCode', [injectDetails.code, !!cb]);
