@@ -80,7 +80,9 @@
  - (void)show:(CDVInvokedUrlCommand*)command;
  - (void)show:(CDVInvokedUrlCommand*)command withAnimation:(BOOL)animated;
  - (void)reload:(CDVInvokedUrlCommand*)command;
- 
+ - (void)stop:(CDVInvokedUrlCommand*)command;
+ - (void)getBody:(CDVInvokedUrlCommand*)command;
+
  @end
  
  @interface CDVThemeableBrowserViewController : UIViewController <UIWebViewDelegate, CDVScreenOrientationDelegate, UIActionSheetDelegate>{
