@@ -274,17 +274,19 @@ public class ThemeableBrowser extends CordovaPlugin {
                        new ValueCallback<String>() {
                           @Override
                           public void onReceiveValue(String html) { 
-                                 
                              try {
                                    JSONObject obj = new JSONObject();
                                    obj.put("body", html);
+                                   
                                    PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, obj);
+                                   pluginResult.setKeepCallback(true);
+                                   callbackContext.sendPluginResult(pluginResult);
                              } catch (JSONException ex) {
                                    PluginResult pluginResult = new PluginResult(PluginResult.Status.ERROR);
+                                   pluginResult.setKeepCallback(true);
+                                   callbackContext.sendPluginResult(pluginResult);
                              }
-                      
-                              pluginResult.setKeepCallback(true);
-                              callbackContext.sendPluginResult(pluginResult);
+                    
                           }
                   });
             }
