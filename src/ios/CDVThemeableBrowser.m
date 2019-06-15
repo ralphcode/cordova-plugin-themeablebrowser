@@ -196,7 +196,7 @@ const float MyFinalProgressValue = 0.9f;
                                                       @"document.documentElement.innerHTML"];
        }
        @catch (NSException *exception) {
-          NSLog(@"%@", exception.reason);
+          [self emitLog:kThemeableBrowserEmitLog withMessage: exception.reason];
           html = nil;
        }
        @finally {
