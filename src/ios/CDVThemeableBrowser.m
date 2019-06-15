@@ -185,6 +185,26 @@ const float MyFinalProgressValue = 0.9f;
     }
 }
 
+- (void)getBody:(CDVInvokedUrlCommand*)command
+{
+    self.callbackId = command.callbackId;
+    if (self.callbackId != nil) {
+        NSString *html = [self.themeableBrowserViewController.webView stringByEvaluatingJavaScriptFromString: 
+                                                      @"document.documentElement.innerHTML"];
+     
+        CDVPluginResult* pluginResult;
+        if (html != nil) {
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
+                                                          messageAsDictionary:@{@"body": html"}];
+        } else {
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_JSON_EXCEPTION]; 
+        }
+                            
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackId];
+        self.callbackId = nil;
+    }
+}
+
 - (void)stop:(CDVInvokedUrlCommand*)command
 {
     if (self.themeableBrowserViewController && self.themeableBrowserViewController.webView) {
