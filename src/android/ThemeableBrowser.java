@@ -265,6 +265,23 @@ public class ThemeableBrowser extends CordovaPlugin {
                     }
                 });
             }
+        } else if (action.equals("getBody")) {
+            if (inAppWebView != null) {
+                // This required API 19
+                inAppWebView.evaluateJavascript(
+                      "(function() { return ('<html>'+document.getElementsByTagName('html')[0].innerHTML+'</html>'); })();",
+                       new ValueCallback<String>() {
+                          @Override
+                          public void onReceiveValue(String html) {                                 
+                              JSONObject obj = new JSONObject();
+                              obj.put("body", html);
+
+                              PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, obj);
+                              pluginResult.setKeepCallback(true);
+                              this.callbackContext.sendPluginResult(pluginResult);
+                          }
+                  });
+            }
         }
         else {
             return false;
