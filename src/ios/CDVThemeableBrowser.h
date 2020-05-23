@@ -22,12 +22,7 @@
  #import <Cordova/CDVScreenOrientationDelegate.h>
  #import <Foundation/Foundation.h>
  #import <UIKit/UIKit.h>
-
- #ifdef __CORDOVA_4_0_0
-     #import <Cordova/CDVUIWebViewDelegate.h>
- #else
-     #import <Cordova/CDVWebViewDelegate.h>
- #endif
+ #import "CDVWKWebViewUIDelegate.h"
  
  @interface CDVThemeableBrowserOptions : NSObject {}
  
@@ -65,7 +60,7 @@
  
  @class CDVThemeableBrowserViewController;
  
- @interface CDVThemeableBrowser : CDVPlugin {
+ @interface CDVThemeableBrowser : CDVPlugin<WKNavigationDelegate> {
      BOOL _injectedIframeBridge;
  }
  
@@ -85,23 +80,16 @@
 
  @end
  
- @interface CDVThemeableBrowserViewController : UIViewController <UIWebViewDelegate, CDVScreenOrientationDelegate, UIActionSheetDelegate>{
+ @interface CDVThemeableBrowserViewController : UIViewController <WKNavigationDelegate, CDVScreenOrientationDelegate, UIActionSheetDelegate>{
      @private
      NSString* _userAgent;
      NSString* _prevUserAgent;
      NSInteger _userAgentLockToken;
      UIStatusBarStyle _statusBarStyle;
-     CDVThemeableBrowserOptions *_browserOptions;
-     
- #ifdef __CORDOVA_4_0_0
-     CDVUIWebViewDelegate* _webViewDelegate;
- #else
-     CDVWebViewDelegate* _webViewDelegate;
- #endif
-     
+     CDVThemeableBrowserOptions *_browserOptions;     
  }
  
- @property (nonatomic, strong) IBOutlet UIWebView* webView;
+ @property (nonatomic, strong) IBOutlet WKWebView* webView;
  @property (nonatomic, strong) IBOutlet UIButton* closeButton;
  @property (nonatomic, strong) IBOutlet UILabel* addressLabel;
  @property (nonatomic, strong) IBOutlet UILabel* titleLabel;
