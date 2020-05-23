@@ -884,7 +884,7 @@ const float MyFinalProgressValue = 0.9f;
     self.webView.contentMode = UIViewContentModeScaleToFill;
     self.webView.multipleTouchEnabled = YES;
     self.webView.opaque = YES;
-    self.webView.scalesPageToFit = NO;
+    // self.webView.scalesPageToFit = NO;
     self.webView.userInteractionEnabled = YES;
 
     self.spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
