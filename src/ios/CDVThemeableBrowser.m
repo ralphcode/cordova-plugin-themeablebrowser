@@ -875,7 +875,8 @@ const float MyFinalProgressValue = 0.9f;
     [self.view addSubview:self.webView];
     [self.view sendSubviewToBack:self.webView];
 
-    self.webView.delegate = _webViewDelegate;
+    // self.webView.delegate = _webViewDelegate;
+    self.webView.navigationDelegate = self;
     self.webView.backgroundColor = [UIColor whiteColor];
 
     self.webView.clearsContextBeforeDrawing = YES;
