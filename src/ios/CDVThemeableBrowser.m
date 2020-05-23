@@ -640,7 +640,7 @@ const float MyFinalProgressValue = 0.9f;
 }
 */
 
-- (void)webViewDidStartLoad:(UIWebView*)theWebView
+- (void)webViewDidStartLoad:(WKWebView*)theWebView
 {
     _injectedIframeBridge = NO;
     _framesOpened++;
