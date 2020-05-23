@@ -1877,7 +1877,7 @@ static void extracted(CDVThemeableBrowserViewController *object, WKWebView *theW
  *  @param progress 进度值
  *  @param webView  当前使用的webView
  */
--(void)setprogress:(CGFloat)progress webView:(UIWebView *)webView
+-(void)setprogress:(CGFloat)progress webView:(WKWebView *)webView
 {
     
     if (progress == 0 && (currentLoadProgress == 1 || currentLoadProgress == 99))
@@ -1906,7 +1906,7 @@ static void extracted(CDVThemeableBrowserViewController *object, WKWebView *theW
 /**
  *  重置
  */
-- (void)reset:(UIWebView *)webView
+- (void)reset:(WKWebView *)webView
 {
     maxLoadCount = loadingCount = 0;
     interactive = NO;
@@ -1918,7 +1918,7 @@ static void extracted(CDVThemeableBrowserViewController *object, WKWebView *theW
  *
  *  @param webView 当前使用的webView
  */
-- (void)startProgress:(UIWebView *)webView
+- (void)startProgress:(WKWebView *)webView
 {
     if (currentLoadProgress < MyInitialProgressValue)
     {
@@ -1932,13 +1932,13 @@ static void extracted(CDVThemeableBrowserViewController *object, WKWebView *theW
  *
  *  @param webView 当前使用的webView
  */
-- (void)completeProgress:(UIWebView *)webView
+- (void)completeProgress:(WKWebView *)webView
 {
     [self setprogress:1.0 webView:webView];
     [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(hideAndResetProgress) userInfo:nil repeats:NO];
 }
 
-- (void)incrementProgress:(UIWebView *)webView
+- (void)incrementProgress:(WKWebView *)webView
 {
     float progress = currentLoadProgress;
     float maxProgress = interactive ? MyFinalProgressValue : MyInteractiveProgressValue;
@@ -1964,33 +1964,6 @@ static void extracted(CDVThemeableBrowserViewController *object, WKWebView *theW
     {
         return currentLoadProgress;
     }
-}
-- (void)updateButton:(UIWebView*)theWebView
-{
-    if (self.backButton) {
-        self.backButton.enabled = _browserOptions.backButtonCanClose || theWebView.canGoBack;
-    }
-
-    if (self.forwardButton) {
-        self.forwardButton.enabled = theWebView.canGoForward;
-    }
-}
-
-/**
- * The reason why this method exists at all is because UIWebView is quite
- * terrible with dealing this hash change, which IS a history change. However
- * when moving to a new hash, only shouldStartLoadWithRequest will be called.
- * Even then it's being called too early such that canGoback and canGoForward
- * hasn't been updated yet. What makes it worse is that when navigating history
- * involving hash by goBack and goForward, no callback is called at all, so we
- * will have to depend on the back and forward button to give us hints when to
- * change button states.
- */
-- (void)updateButtonDelayed:(UIWebView*)theWebView
-{
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-        [self updateButton:theWebView];
-    });
 }
 
 #pragma mark CDVScreenOrientationDelegate
