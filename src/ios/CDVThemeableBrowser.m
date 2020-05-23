@@ -1582,9 +1582,9 @@ const float MyFinalProgressValue = 0.9f;
     [self rePositionViews];
 
     // Set the delegate again in case we need it
-    if (self.webView.delegate == nil) { 
-      self.webView.delegate = self;
-    }
+    // if (self.webView.delegate == nil) { 
+    //  self.webView.delegate = self;
+    // }
 
     [super viewWillAppear:animated];
 }
@@ -1597,7 +1597,7 @@ const float MyFinalProgressValue = 0.9f;
    
     // Clear the view;
     [self.webView loadHTMLString:@"" baseURL:nil];
-    self.webView.delegate = nil;
+    // self.webView.delegate = nil;
     
     // Kill the loading to stop crashes after we've closed
     [self.webView stopLoading];
