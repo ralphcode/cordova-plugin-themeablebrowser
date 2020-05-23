@@ -93,7 +93,7 @@ const float MyFinalProgressValue = 0.9f;
     _callbackIdPattern = nil;
 }
 #else
-- (CDVThemeableBrowser*)initWithWebView:(UIWebView*)theWebView
+- (CDVThemeableBrowser*)initWithWebView:(WKWebView*)theWebView
 {
     self = [super initWithWebView:theWebView];
     if (self != nil) {
@@ -349,15 +349,18 @@ const float MyFinalProgressValue = 0.9f;
         }
     }
 
-    // UIWebView options
-    self.themeableBrowserViewController.webView.scalesPageToFit = browserOptions.zoom;
-    self.themeableBrowserViewController.webView.mediaPlaybackRequiresUserAction = browserOptions.mediaplaybackrequiresuseraction;
-    self.themeableBrowserViewController.webView.allowsInlineMediaPlayback = browserOptions.allowinlinemediaplayback;
-    if (IsAtLeastiOSVersion(@"6.0")) {
-        self.themeableBrowserViewController.webView.keyboardDisplayRequiresUserAction = browserOptions.keyboarddisplayrequiresuseraction;
-        self.themeableBrowserViewController.webView.suppressesIncrementalRendering = browserOptions.suppressesincrementalrendering;
-    }
+     // Todo: options need to be updated based on WKWebView which are not directly translatable from UIWebView
 
+    // UIWebView options
+    // self.themeableBrowserViewController.webView.scalesPageToFit = browserOptions.zoom;
+    // self.themeableBrowserViewController.webView.mediaPlaybackRequiresUserAction = browserOptions.mediaplaybackrequiresuseraction;
+    // self.themeableBrowserViewController.webView.allowsInlineMediaPlayback = browserOptions.allowinlinemediaplayback;
+    // if (IsAtLeastiOSVersion(@"6.0")) {
+    //     self.themeableBrowserViewController.webView.keyboardDisplayRequiresUserAction = browserOptions.keyboarddisplayrequiresuseraction;
+    //     self.themeableBrowserViewController.webView.suppressesIncrementalRendering = browserOptions.suppressesincrementalrendering;
+    // }
+
+    self.themeableBrowserViewController.webView.navigationDelegate = self;
     [self.themeableBrowserViewController navigateTo:url];
     if (!browserOptions.hidden) {
         [self show:nil withAnimation:!browserOptions.disableAnimation];
@@ -554,7 +557,7 @@ const float MyFinalProgressValue = 0.9f;
  * If present, the path component of the special gap-iab:// url is expected to be a URL-escaped JSON-encoded
  * value to pass to the callback. [NSURL path] should take care of the URL-unescaping, and a JSON_EXCEPTION
  * is returned if the JSON is invalid.
- */
+
 - (BOOL)webView:(UIWebView*)theWebView shouldStartLoadWithRequest:(NSURLRequest*)request navigationType:(UIWebViewNavigationType)navigationType
 {
     NSURL* url = request.URL;
@@ -635,6 +638,7 @@ const float MyFinalProgressValue = 0.9f;
 
     return YES;
 }
+*/
 
 - (void)webViewDidStartLoad:(UIWebView*)theWebView
 {
@@ -642,7 +646,43 @@ const float MyFinalProgressValue = 0.9f;
     _framesOpened++;
 }
 
-- (void)webViewDidFinishLoad:(UIWebView*)theWebView
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler {
+    NSURLRequest *request = navigationAction.request;
+    self.themeableBrowserViewController.currentURL = request.URL;
+    decisionHandler(WKNavigationActionPolicyAllow);
+}
+
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation {
+    if (self.callbackId != nil) {
+        // TODO: It would be more useful to return the URL the page is actually on (e.g. if it's been redirected).
+        NSString* url = [self.themeableBrowserViewController.currentURL absoluteString];
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
+                                                      messageAsDictionary:@{@"type":@"loadstop", @"url":url}];
+        [pluginResult setKeepCallback:[NSNumber numberWithBool:YES]];
+
+        // once a web view finished loading a frame, reset the stored original
+        // URL of the frame so that it can be used to detect next redirection
+        originalUrl = nil;
+
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackId];
+    }
+}
+
+
+- (void)webView:(WKWebView*)theWebView didFailLoadWithError:(NSError*)error
+{
+    if (self.callbackId != nil) {
+        NSString* url = [self.themeableBrowserViewController.currentURL absoluteString];
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
+                                                      messageAsDictionary:@{@"type":@"loaderror", @"url":url, @"code": [NSNumber numberWithInteger:error.code], @"message": error.localizedDescription}];
+        [pluginResult setKeepCallback:[NSNumber numberWithBool:YES]];
+
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackId];
+    }
+}
+
+
+/*- (void)webViewDidFinishLoad:(UIWebView*)theWebView
 {
     if (self.callbackId != nil) {
         // TODO: It would be more useful to return the URL the page is actually on (e.g. if it's been redirected).
@@ -669,7 +709,7 @@ const float MyFinalProgressValue = 0.9f;
 
         [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackId];
     }
-}
+}*/
 
 - (void)browserExit
 {
@@ -774,17 +814,8 @@ const float MyFinalProgressValue = 0.9f;
         _userAgent = userAgent;
         _prevUserAgent = prevUserAgent;
         _browserOptions = browserOptions;
-#ifdef __CORDOVA_4_0_0
-        _webViewDelegate = [[CDVUIWebViewDelegate alloc] initWithDelegate:self];
-#else
-        _webViewDelegate = [[CDVWebViewDelegate alloc] initWithDelegate:self];
-#endif
         _navigationDelegate = navigationDelegate;
         _statusBarStyle = statusBarStyle;
-        maxLoadCount = loadingCount = 0;
-         //默认值currentLoadProgress = 99;
-         currentLoadProgress = 99;
-         interactive = NO;
         [self createViews];
     }
 
@@ -806,7 +837,7 @@ const float MyFinalProgressValue = 0.9f;
         webViewBounds.origin.y += toolbarHeight + toolbarY;
     }
  
-    self.webView = [[UIWebView alloc] initWithFrame:webViewBounds];
+    self.webView = [[WKWebView alloc] initWithFrame:webViewBounds];
 
     self.webView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
 
@@ -1643,7 +1674,7 @@ const float MyFinalProgressValue = 0.9f;
 }
 
 #pragma mark UIWebViewDelegate
-
+/*
 - (void)webViewDidStartLoad:(UIWebView*)theWebView
 {
     // loading url, start spinner
@@ -1774,6 +1805,39 @@ const float MyFinalProgressValue = 0.9f;
     {
         [self completeProgress:theWebView];
     }
+}
+*/
+
+- (void)updateButton:(WKWebView*)theWebView
+{
+    if (self.backButton) {
+        self.backButton.enabled = _browserOptions.backButtonCanClose || theWebView.canGoBack;
+    }
+
+    if (self.forwardButton) {
+        self.forwardButton.enabled = theWebView.canGoForward;
+    }
+}
+
+static void extracted(CDVThemeableBrowserViewController *object, WKWebView *theWebView) {
+    [object updateButton:theWebView];
+}
+
+/**
+ * The reason why this method exists at all is because UIWebView is quite
+ * terrible with dealing this hash change, which IS a history change. However
+ * when moving to a new hash, only shouldStartLoadWithRequest will be called.
+ * Even then it's being called too early such that canGoback and canGoForward
+ * hasn't been updated yet. What makes it worse is that when navigating history
+ * involving hash by goBack and goForward, no callback is called at all, so we
+ * will have to depend on the back and forward button to give us hints when to
+ * change button states.
+ */
+- (void)updateButtonDelayed:(WKWebView*)theWebView
+{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+        extracted(self, theWebView);
+    });
 }
 
 /**
