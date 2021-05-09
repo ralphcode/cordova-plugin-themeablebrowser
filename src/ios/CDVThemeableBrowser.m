@@ -392,9 +392,23 @@ const float MyFinalProgressValue = 0.9f;
     // }
 
     self.themeableBrowserViewController.webView.navigationDelegate = self;
+    [self.themeableBrowserViewController.webView addObserver:self forKeyPath:@"URL" options:NSKeyValueObservingOptionNew context:nil];
     [self.themeableBrowserViewController navigateTo:url];
     if (!browserOptions.hidden) {
         [self show:nil withAnimation:!browserOptions.disableAnimation];
+    }
+}
+
+-(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
+    if ([keyPath isEqual:@"URL"]) {
+        // Google AMP Pages do not change the page. So nothing happens. This is a hacky workaround;
+        NSLog(@"# URL: %@",  self.themeableBrowserViewController.webView.URL);
+        if (self.callbackId != nil) {
+            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
+                                                          messageAsDictionary:@{@"type":@"loadstart", @"url":[self.themeableBrowserViewController.webView.URL absoluteString]}];
+            [pluginResult setKeepCallback:[NSNumber numberWithBool:YES]];
+            [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackId];
+        }
     }
 }
 
