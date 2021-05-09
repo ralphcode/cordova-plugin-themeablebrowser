@@ -412,6 +412,31 @@ const float MyFinalProgressValue = 0.9f;
     }
 }
 
+- (void)navigate:(CDVInvokedUrlCommand*)command
+{
+    if ([command.arguments count] == 0) return;
+    
+    NSString* path = command.arguments.firstObject;
+    if (path != nil && [path length] > 0) {
+        NSURL *url = [NSURL URLWithString:path];
+        [self.themeableBrowserViewController navigateTo:url];
+    }
+    if (command.callbackId != nil) {
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
+                                                      messageAsDictionary:@{@"type":@"sent"}];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+}
+
+- (void)hide:(CDVInvokedUrlCommand*)command
+{
+    if (command.callbackId != nil) {
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
+                                                      messageAsDictionary:@{@"type":@"not implemented"}];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+}
+
 - (void)show:(CDVInvokedUrlCommand*)command
 {
     [self show:command withAnimation:YES];
