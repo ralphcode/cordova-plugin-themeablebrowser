@@ -211,6 +211,32 @@ public class InAppBrowser extends CordovaPlugin {
             PluginResult pluginResult = new PluginResult(PluginResult.Status.OK);
             pluginResult.setKeepCallback(true);
             this.callbackContext.sendPluginResult(pluginResult);
+        } else if (action.equals("navigate")) {
+            this.callbackContext = callbackContext;
+            final String url = args.getString(0);
+            this.cordova.getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    final AmazonWebView childView = this.inAppWebView;
+                    // The JS protects against multiple calls, so this should happen only when
+                    // closeDialog() is called by other native code.
+                    if (childView == null) {
+                          PluginResult pluginResult = new PluginResult(PluginResult.Status.ERROR);
+                          pluginResult.setKeepCallback(true);
+                          callbackContext.sendPluginResult(pluginResult);
+                          return;
+                    }
+                    inAppWebView.loadUrl(url);      
+                    PluginResult pluginResult = new PluginResult(PluginResult.Status.OK);
+                    pluginResult.setKeepCallback(true);
+                    callbackContext.sendPluginResult(pluginResult);
+                }
+            });
+        }
+        else if (action.equals("hide")) {
+            PluginResult pluginResult = new PluginResult(PluginResult.Status.ERROR);
+            pluginResult.setKeepCallback(true);
+            this.callbackContext.sendPluginResult(pluginResult);
         }
         else {
             return false;
