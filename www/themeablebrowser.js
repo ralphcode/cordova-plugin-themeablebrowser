@@ -34,15 +34,23 @@ ThemeableBrowser.prototype = {
             this.channels[event.type].fire(event);
         }
     },
-    close: function (eventname) {
+    close: function () {
         exec(null, null, 'ThemeableBrowser', 'close', []);
         return this;
     },
-    show: function (eventname) {
+    show: function () {
         exec(null, null, 'ThemeableBrowser', 'show', []);
         return this;
     },
-    reload: function (eventname) {
+    hide: function () {
+        exec(null, null, 'ThemeableBrowser', 'hide', []);
+        return this;
+    },
+    navigate: function (url, cb) {
+        exec(cb, null, 'ThemeableBrowser', 'navigate', [url, !!cb]);
+        return this;
+    },
+    reload: function () {
         exec(null, null, 'ThemeableBrowser', 'reload', []);
         return this;
     },
