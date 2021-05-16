@@ -404,10 +404,13 @@ const float MyFinalProgressValue = 0.9f;
         // Google AMP Pages do not change the page. So nothing happens. This is a hacky workaround;
         NSLog(@"# URL: %@",  self.themeableBrowserViewController.webView.URL);
         if (self.callbackId != nil) {
-            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
-                                                          messageAsDictionary:@{@"type":@"loadstart", @"url":[self.themeableBrowserViewController.webView.URL absoluteString]}];
-            [pluginResult setKeepCallback:[NSNumber numberWithBool:YES]];
-            [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackId];
+            NSString *url = [self.themeableBrowserViewController.webView.URL absoluteString];
+            if (url != nil) {
+              CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
+                                                            messageAsDictionary:@{@"type":@"loadstart", @"url":[self.themeableBrowserViewController.webView.URL absoluteString]}];
+              [pluginResult setKeepCallback:[NSNumber numberWithBool:YES]];
+              [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackId];
+           }
         }
     }
 }
