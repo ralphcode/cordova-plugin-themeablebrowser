@@ -115,6 +115,8 @@
  - (void)showLocationBar:(BOOL)show;
  - (void)showToolBar:(BOOL)show : (NSString*) toolbarPosition;
  - (void)setCloseButtonTitle:(NSString*)title;
+ - (void)updateButton:(WKWebView*)theWebView;
+ - (void)updateButtonDelayed:(WKWebView*)theWebView;
  
  - (id)initWithUserAgent:(NSString*)userAgent prevUserAgent:(NSString*)prevUserAgent browserOptions: (CDVThemeableBrowserOptions*) browserOptions navigationDelete:(CDVThemeableBrowser*) navigationDelegate statusBarStyle:(UIStatusBarStyle) statusBarStyle;
  
