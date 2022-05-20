@@ -286,7 +286,7 @@ const float MyFinalProgressValue = 0.9f;
         [self emitWarning:kThemeableBrowserEmitCodeUndefined
             withMessage:@"No config was given, defaults will be used, which is quite boring."];
     }
-
+    
     return obj;
 }
 
@@ -736,8 +736,9 @@ const float MyFinalProgressValue = 0.9f;
         // once a web view finished loading a frame, reset the stored original
         // URL of the frame so that it can be used to detect next redirection
         originalUrl = nil;
-
+        
         [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackId];
+        [self.themeableBrowserViewController updateButtonDelayed:self.themeableBrowserViewController.webView];
     }
 }
 
@@ -751,6 +752,7 @@ const float MyFinalProgressValue = 0.9f;
         [pluginResult setKeepCallback:[NSNumber numberWithBool:YES]];
 
         [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackId];
+        [self.themeableBrowserViewController updateButtonDelayed:self.themeableBrowserViewController.webView];
     }
 }
 
@@ -916,7 +918,7 @@ const float MyFinalProgressValue = 0.9f;
 
     [self.view addSubview:self.webView];
     [self.view sendSubviewToBack:self.webView];
-
+    
     // self.webView.delegate = _webViewDelegate;
     self.webView.navigationDelegate = self;
     self.webView.backgroundColor = [UIColor whiteColor];
@@ -1882,10 +1884,11 @@ const float MyFinalProgressValue = 0.9f;
 }
 */
 
+
 - (void)updateButton:(WKWebView*)theWebView
 {
     if (self.backButton) {
-        self.backButton.enabled = _browserOptions.backButtonCanClose || theWebView.canGoBack;
+        self.backButton.enabled = true; // _browserOptions.backButtonCanClose || theWebView.canGoBack;
     }
 
     if (self.forwardButton) {
@@ -1909,7 +1912,7 @@ static void extracted(CDVThemeableBrowserViewController *object, WKWebView *theW
  */
 - (void)updateButtonDelayed:(WKWebView*)theWebView
 {
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.2 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
         extracted(self, theWebView);
     });
 }
@@ -1938,6 +1941,7 @@ static void extracted(CDVThemeableBrowserViewController *object, WKWebView *theW
            [self.progressView setProgress:progress animated:YES];
         }
     }
+    [self updateButton: self.webView];
 }
 
 - (void) hideAndResetProgress
