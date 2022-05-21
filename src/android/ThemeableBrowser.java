@@ -268,27 +268,31 @@ public class ThemeableBrowser extends CordovaPlugin {
             }
         } else if (action.equals("getBody")) {
             if (inAppWebView != null) {
-                // This required API 19
-                inAppWebView.evaluateJavascript(
-                      "(function() { return ('<html>'+document.getElementsByTagName('html')[0].innerHTML+'</html>'); })();",
-                       new ValueCallback<String>() {
-                          @Override
-                          public void onReceiveValue(String html) { 
-                             try {
-                                   JSONObject obj = new JSONObject();
-                                   obj.put("body", html);
-                                   
-                                   PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, obj);
-                                   pluginResult.setKeepCallback(true);
-                                   callbackContext.sendPluginResult(pluginResult);
-                             } catch (JSONException ex) {
-                                   PluginResult pluginResult = new PluginResult(PluginResult.Status.ERROR);
-                                   pluginResult.setKeepCallback(true);
-                                   callbackContext.sendPluginResult(pluginResult);
-                             }
-                    
-                          }
-                  });
+                inAppWebView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        inAppWebView.evaluateJavascript(
+                        "(function() { return ('<html>'+document.getElementsByTagName('html')[0].innerHTML+'</html>'); })();",
+                        new ValueCallback<String>() {
+                            @Override
+                            public void onReceiveValue(String html) {
+                                try {
+                                    JSONObject obj = new JSONObject();
+                                    obj.put("body", html);
+
+                                    PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, obj);
+                                    pluginResult.setKeepCallback(true);
+                                    callbackContext.sendPluginResult(pluginResult);
+                                } catch (JSONException ex) {
+                                    PluginResult pluginResult = new PluginResult(PluginResult.Status.ERROR);
+                                    pluginResult.setKeepCallback(true);
+                                    callbackContext.sendPluginResult(pluginResult);
+                                }
+
+                            }
+                        });
+                    }
+                });
             }
         }
         else {
@@ -1402,7 +1406,7 @@ public class ThemeableBrowser extends CordovaPlugin {
      * Like Spinner but will always trigger onItemSelected even if a selected
      * item is selected, and always ignore default selection.
      */
-    public class MenuSpinner extends Spinner {
+    public class MenuSpinner extends androidx.appcompat.widget.AppCompatSpinner {
         private OnItemSelectedListener listener;
 
         public MenuSpinner(Context context) {
