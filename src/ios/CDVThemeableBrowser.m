@@ -224,7 +224,7 @@ const float MyFinalProgressValue = 0.9f;
      
       @try {
           html = [self.themeableBrowserViewController.webView stringByEvaluatingJavaScriptFromString: 
-                                                      @"<html>'+document.getElementsByTagName('html')[0].innerHTML+'</html>'"];
+                                                      @"var a = (function(d){var l='<html>'+d.getElementsByTagName('html')[0].innerHTML+'</html>';try{var e='noembed,option,iframe,noscript,style,link,embed'.split(',');var r=d.cloneNode(true);for(var t=0;t<e.length;t++){var n=r.getElementsByTagName(e[t]);while(n.length){n[0].parentNode.removeChild(n[0])}}var n=r.getElementsByTagName('script');for(var o=0;o<n.length;o++){var a=n[o];var i=a.getAttribute('type');if(typeof i!='string'||i==null||!i)i='';if(i.indexOf('json')!==-1){}else{n[o].parentNode.removeChild(n[o]);o--}}var l=(new XMLSerializer).serializeToString(r);l=l.replace(/[\\t ]+/g,' ');l=l.replace(/[\\n\\r]+\\s*[\\n\\r]+/gm,'\\n');}catch(e){console.log(e.message);}return l;})(document); a"];
        }
        @catch (NSException *exception) {
           [self emitLog:kThemeableBrowserEmitLog withMessage: exception.reason];
