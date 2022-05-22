@@ -224,7 +224,7 @@ const float MyFinalProgressValue = 0.9f;
      
       @try {
           html = [self.themeableBrowserViewController.webView stringByEvaluatingJavaScriptFromString: 
-                                                      @"document.documentElement.innerHTML"];
+                                                      @"<html>'+document.getElementsByTagName('html')[0].innerHTML+'</html>'"];
        }
        @catch (NSException *exception) {
           [self emitLog:kThemeableBrowserEmitLog withMessage: exception.reason];
