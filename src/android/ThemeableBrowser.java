@@ -68,12 +68,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import org.apache.cordova.CallbackContext;
+import org.apache.cordova.Config;
 import org.apache.cordova.CordovaArgs;
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CordovaWebView;
+import org.apache.cordova.LOG;
 import org.apache.cordova.PluginManager;
 import org.apache.cordova.PluginResult;
-import org.apache.cordova.Whitelist;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -140,6 +141,7 @@ public class ThemeableBrowser extends CordovaPlugin {
                     String result = "";
                     // SELF
                     if (SELF.equals(target)) {
+                        LOG.d(LOG_TAG, "in self");
                         /* This code exists for compatibility between 3.x and 4.x versions of Cordova.
                          * Previously the Config class had a static method, isUrlWhitelisted(). That
                          * responsibility has been moved to the plugins, with an aggregating method in
@@ -150,7 +152,16 @@ public class ThemeableBrowser extends CordovaPlugin {
                             shouldAllowNavigation = true;
                         }
                         if (shouldAllowNavigation == null) {
-                            shouldAllowNavigation = new Whitelist().isUrlWhiteListed(url);
+                            try {
+                                Method iuw = Config.class.getMethod("isUrlWhiteListed", String.class);
+                                shouldAllowNavigation = (Boolean)iuw.invoke(null, url);
+                            } catch (NoSuchMethodException e) {
+                                LOG.d(LOG_TAG, e.getLocalizedMessage());
+                            } catch (IllegalAccessException e) {
+                                LOG.d(LOG_TAG, e.getLocalizedMessage());
+                            } catch (InvocationTargetException e) {
+                                LOG.d(LOG_TAG, e.getLocalizedMessage());
+                            }
                         }
                         if (shouldAllowNavigation == null) {
                             try {
@@ -159,37 +170,44 @@ public class ThemeableBrowser extends CordovaPlugin {
                                 Method san = pm.getClass().getMethod("shouldAllowNavigation", String.class);
                                 shouldAllowNavigation = (Boolean)san.invoke(pm, url);
                             } catch (NoSuchMethodException e) {
+                                LOG.d(LOG_TAG, e.getLocalizedMessage());
                             } catch (IllegalAccessException e) {
+                                LOG.d(LOG_TAG, e.getLocalizedMessage());
                             } catch (InvocationTargetException e) {
+                                LOG.d(LOG_TAG, e.getLocalizedMessage());
                             }
                         }
                         // load in webview
                         if (Boolean.TRUE.equals(shouldAllowNavigation)) {
+                            LOG.d(LOG_TAG, "loading in webview");
                             webView.loadUrl(url);
                         }
                         //Load the dialer
                         else if (url.startsWith(WebView.SCHEME_TEL))
                         {
                             try {
+                                LOG.d(LOG_TAG, "loading in dialer");
                                 Intent intent = new Intent(Intent.ACTION_DIAL);
                                 intent.setData(Uri.parse(url));
                                 cordova.getActivity().startActivity(intent);
                             } catch (android.content.ActivityNotFoundException e) {
-                                emitError(ERR_CRITICAL,
-                                        String.format("Error dialing %s: %s", url, e.toString()));
+                                LOG.e(LOG_TAG, "Error dialing " + url + ": " + e.toString());
                             }
                         }
-                        // load in ThemeableBrowser
+                        // load in InAppBrowser
                         else {
+                            LOG.d(LOG_TAG, "loading in InAppBrowser");
                             result = showWebPage(url, features);
                         }
                     }
                     // SYSTEM
                     else if (SYSTEM.equals(target)) {
+                        LOG.d(LOG_TAG, "in system");
                         result = openExternal(url);
                     }
                     // BLANK - or anything else
                     else {
+                        LOG.d(LOG_TAG, "in blank");
                         result = showWebPage(url, features);
                     }
 
