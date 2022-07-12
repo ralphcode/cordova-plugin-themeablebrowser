@@ -21,7 +21,6 @@
 
 #import "CDVThemeableBrowser.h"
 #import <Cordova/CDVPluginResult.h>
-#import <Cordova/CDVUserAgentUtil.h>
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
@@ -328,9 +327,9 @@ const float MyFinalProgressValue = 0.9f;
     }
 
     if (self.themeableBrowserViewController == nil) {
-        NSString* originalUA = [CDVUserAgentUtil originalUserAgent];
+        // NSString* originalUA = [CDVUserAgentUtil originalUserAgent];
         self.themeableBrowserViewController = [[CDVThemeableBrowserViewController alloc]
-                                               initWithUserAgent:originalUA prevUserAgent:[self.commandDelegate userAgent]
+                                               initWithUserAgent:@"Mozilla/5.0 (iPhone; CPU iPhone OS 10_3_1 like Mac OS X) AppleWebKit/603.1.30 (KHTML, like Gecko) Version/10.0 Mobile/14E304 Safari/602.1" prevUserAgent:@"Mozilla/5.0 (iPhone; CPU iPhone OS 10_3_1 like Mac OS X) AppleWebKit/603.1.30 (KHTML, like Gecko) Version/10.0 Mobile/14E304 Safari/602.1"
                                                browserOptions: browserOptions
                                                navigationDelete:self
                                                statusBarStyle:[UIApplication sharedApplication].statusBarStyle];
@@ -1421,7 +1420,7 @@ const float MyFinalProgressValue = 0.9f;
 - (void)viewDidUnload
 {
     [self.webView loadHTMLString:@"" baseURL:nil];
-    [CDVUserAgentUtil releaseLock:&_userAgentLockToken];
+    // [CDVUserAgentUtil releaseLock:&_userAgentLockToken];
     [super viewDidUnload];
 }
 
@@ -1434,7 +1433,7 @@ const float MyFinalProgressValue = 0.9f;
 {
     [self emitEventForButton:_browserOptions.closeButton];
 
-    [CDVUserAgentUtil releaseLock:&_userAgentLockToken];
+    // [CDVUserAgentUtil releaseLock:&_userAgentLockToken];
     self.currentURL = nil;
 
     if ((self.navigationDelegate != nil) && [self.navigationDelegate respondsToSelector:@selector(browserExit)]) {
@@ -1508,11 +1507,11 @@ const float MyFinalProgressValue = 0.9f;
     if (_userAgentLockToken != 0) {
         [self.webView loadRequest:request];
     } else {
-        [CDVUserAgentUtil acquireLock:^(NSInteger lockToken) {
-            _userAgentLockToken = lockToken;
-            [CDVUserAgentUtil setUserAgent:_userAgent lockToken:lockToken];
+        // [CDVUserAgentUtil acquireLock:^(NSInteger lockToken) {
+            // _userAgentLockToken = lockToken;
+            // [CDVUserAgentUtil setUserAgent:_userAgent lockToken:lockToken];
             [self.webView loadRequest:request];
-        }];
+        // }];
     }
 }
 
@@ -1656,16 +1655,14 @@ const float MyFinalProgressValue = 0.9f;
 // change that value.
 //
 - (float) getStatusBarOffset {
-  
    //RS: NOW USING UIWINDOW WE SIT ABOVE THE STATUS BAR, unless iphone x in portrait - REMOVED AS NOW WE ARE IN VC AGAIN
    //if (IS_IPHONEX_PORT) {
-     CGRect statusBarFrame = [[UIApplication sharedApplication] statusBarFrame];
-     float statusBarOffset = IsAtLeastiOSVersion(@"7.0") ? MIN(statusBarFrame.size.width, statusBarFrame.size.height) : 0.0;
-     return statusBarOffset;
+   CGRect statusBarFrame = [[UIApplication sharedApplication] statusBarFrame];
+   float statusBarOffset = IsAtLeastiOSVersion(@"7.0") ? MIN(statusBarFrame.size.width, statusBarFrame.size.height) : 0.0;
+   return statusBarOffset;
    //} else {
    // return 0;
    //}
-
 }
 
 - (void) rePositionViews {
@@ -2032,6 +2029,7 @@ static void extracted(CDVThemeableBrowserViewController *object, WKWebView *theW
     return 1 << UIInterfaceOrientationPortrait;
 }
 
+/*
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     if ((self.orientationDelegate != nil) && [self.orientationDelegate respondsToSelector:@selector(shouldAutorotateToInterfaceOrientation:)]) {
@@ -2040,6 +2038,7 @@ static void extracted(CDVThemeableBrowserViewController *object, WKWebView *theW
 
     return YES;
 }
+*/
 
 + (UIColor *)colorFromRGBA:(NSString *)rgba {
     unsigned rgbaVal = 0;
@@ -2124,6 +2123,7 @@ static void extracted(CDVThemeableBrowserViewController *object, WKWebView *theW
     return 1 << UIInterfaceOrientationPortrait;
 }
 
+/*
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     if ((self.orientationDelegate != nil) && [self.orientationDelegate respondsToSelector:@selector(shouldAutorotateToInterfaceOrientation:)]) {
@@ -2132,6 +2132,7 @@ static void extracted(CDVThemeableBrowserViewController *object, WKWebView *theW
 
     return YES;
 }
+*/
 
 
 @end
